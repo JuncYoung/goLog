@@ -6,7 +6,7 @@ import "github.com/JuncYoung/goLog"
 func main() {
 	goLog.SetSysLevel(0)
 	goLog.InitConf("E:\\qnzs\\goPro\\goLog\\logeeee", 7, 0, false)
-	goLog.SetupQnFormatByDate("E:\\qnzs\\goPro\\goLog\\logsss", "qnApi.log", "demoService", 7, 0, true, logger.DebugLevel)
+	goLog.SetupQnFormatByDate("E:\\qnzs\\goPro\\goLog\\logsss", "qnApi.log", "demoService", 7, 0, true, goLog.DebugLevel)
 
 
 	goLog.LogPrintfWithID(goLog.DebugLevel, "xxx", "ssssssssssssss %s", "ddd")
