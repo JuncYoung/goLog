@@ -1,6 +1,6 @@
 package main
 
-import "goLog"
+import "github.com/JuncYoung/goLog"
 
 // example
 func main() {
