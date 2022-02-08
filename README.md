@@ -1,6 +1,9 @@
-#goLog
+# goLog
+<hr/>
 
-##useage:
+> go log base on logurs
+
+## useage
     nowTime := time.Now()
     goLog.SetSysLevel(goLog.DebugLevel)
     goLog.InitConf(goLog.SettingDetail{
