@@ -9,6 +9,7 @@ var (
 )
 
 func GetFileLogger(fileName string) Logger {
+	flSets := sets.FileLog
 	if fileName == "" {
 		LogPrintf(ErrorLevel, "get empty file name")
 		return Logger{}
@@ -16,7 +17,7 @@ func GetFileLogger(fileName string) Logger {
 
 	flog := GetFileLoggerMgr().getFileLogger(fileName)
 	if flog.Logger == nil {
-		if err := SetupLoggerByDate(sets.Com.LogDir, fileName, sets.Com.RotateMaxAge, sets.Com.Skip, sets.Com.Report, DebugLevel); err != nil {
+		if err := SetupLoggerByDate(flSets.LogDir, fileName, flSets.RotateMaxAge, flSets.Skip, flSets.Report, DebugLevel); err != nil {
 			LogPrintf(ErrorLevel, "setupLoggerByDate err: %s\n", err.Error())
 		}
 		flog = GetFileLoggerMgr().getFileLogger(fileName)
@@ -28,4 +29,3 @@ func GetFileLogger(fileName string) Logger {
 func GetQnFileLogger() Logger {
 	return GetFileLoggerMgr().getQnFileLogger()
 }
-

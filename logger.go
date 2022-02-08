@@ -10,26 +10,45 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (l Logger) ParseQnApiLogFormat(isInput bool, t int64, data interface{}) {
+const (
+	defaultDir     = "./logs"
+	defaultLogName = "qnLog"
+)
+
+func (l Logger) ParseQnApiLogInput(data interface{}) {
 	s := standardLogFormat{
 		Service: l.ServiceName,
+		From:    data,
 	}
-	if isInput {
-		s.From = data
-	} else {
-		s.Out = data
-		s.Time = float32(t) / float32(time.Second)
-	}
+
 	bs, err := json.Marshal(s)
 	if err != nil {
-		LogPrintf(ErrorLevel, "ParseQnApiLogFormat Marshal err:%s", err.Error())
+		LogPrintf(ErrorLevel, "qnApiLog Marshal err:%s", err.Error())
+	}
+	str := string(bs)
+	l.Info(str)
+}
+
+func (l Logger) ParseQnApiLogOutput(t time.Time, data interface{}) {
+	s := standardLogFormat{
+		Service: l.ServiceName,
+		Out:     data,
+		Time:    time.Now().Sub(t).Seconds(),
+	}
+
+	bs, err := json.Marshal(s)
+	if err != nil {
+		LogPrintf(ErrorLevel, "qnApiLog Marshal err:%s", err.Error())
 	}
 	str := string(bs)
 	l.Info(str)
 }
 
 func SetupLoggerByDate(logDir, logName string, rotateMaxAge, skip int, report bool, level int) error {
-	LogPrintf(DebugLevel, "SetupLoggerCommonByDate using log dir : [%s]\n", logDir)
+	if logDir == "" {
+		logDir = defaultDir
+	}
+	LogPrintf(DebugLevel, "SetupLoggerByDate using log dir : [%s]\n", logDir)
 
 	log := logrus.New()
 	return setupLoggerByDate(log, parseLogLevel(level), logName, logDir, rotateMaxAge, skip, report)
@@ -80,11 +99,18 @@ func setupLoggerByDate(logs *logrus.Logger, level logrus.Level, fileName, logDir
 	return nil
 }
 
-func SetupQnFormatByDate(logDir, logName, serviceName string, rotateMaxAge, skip int, report bool, level int) error {
+func SetupQnFormatByDate(logName, serviceName string) error {
+	qnSets := sets.QnLog
+	logDir := qnSets.LogDir
+	if logDir == "" {
+		logDir = defaultDir
+	}
+	if logName == "" {
+		logName = defaultLogName
+	}
 	LogPrintf(DebugLevel, "SetupQnFormatByDate using log dir : [%s]\n", logDir)
-
 	log := logrus.New()
-	return setupDIYFormatByDate(log, parseLogLevel(level), logName, logDir, serviceName, rotateMaxAge, skip, report)
+	return setupDIYFormatByDate(log, parseLogLevel(qnSets.Level), logName, logDir, serviceName, qnSets.RotateMaxAge, qnSets.Skip, qnSets.Report)
 }
 
 func setupDIYFormatByDate(logs *logrus.Logger, level logrus.Level, fileName, logDir, serviceName string, rotateMaxAge, skip int, report bool) error {

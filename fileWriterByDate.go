@@ -194,4 +194,3 @@ func getPackageName(f string) string {
 
 	return f
 }
-

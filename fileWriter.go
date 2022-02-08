@@ -9,7 +9,7 @@ import (
 
 var (
 	ErrLogFileWriterEmpty = errors.New("logFileWriter is nil")
-	ErrFileNotOpen = errors.New("file not opened")
+	ErrFileNotOpen        = errors.New("file not opened")
 )
 
 func (p *LogFileWriter) Write(data []byte) (int, error) {

@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	qnLog     = "qnApi"
+	qnLog = "qnApi"
 )
 
 var (

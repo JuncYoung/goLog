@@ -1,10 +1,8 @@
 package goLog
 
-func InitConf(dir string, rotateMaxAge int, skip int, report bool) {
-	sets.Com = settingDetail{
-		LogDir: dir,
-		RotateMaxAge:  rotateMaxAge,
-		Skip:  skip,
-		Report:  report,
+func InitConf(fileLog SettingDetail, qnLog SettingDetail) {
+	sets = settings{
+		FileLog: fileLog,
+		QnLog:   qnLog,
 	}
 }

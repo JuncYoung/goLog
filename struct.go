@@ -7,15 +7,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type settingDetail struct {
-	LogDir string `json:"logDir"`
-	RotateMaxAge int `json:"rotateMaxAge"`
-	Skip int `json:"skip"`
-	Report bool `json:"report"`
+type SettingDetail struct {
+	LogDir       string `json:"logDir"`
+	RotateMaxAge int    `json:"rotateMaxAge"`
+	Skip         int    `json:"skip"`
+	Report       bool   `json:"report"`
+	Level        int    `json:"level"`
 }
 
 type settings struct {
-	Com settingDetail
+	FileLog SettingDetail
+	QnLog   SettingDetail
 }
 
 type FileLoggerMgr struct {
@@ -29,7 +31,7 @@ type standardLogFormat struct {
 	Service string      `json:"service"`
 	From    interface{} `json:"from,omitempty"`
 	Out     interface{} `json:"out,omitempty"`
-	Time    float32     `json:"time,omitempty"`
+	Time    float64     `json:"time,omitempty"`
 }
 
 type Logger struct {
