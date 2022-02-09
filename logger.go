@@ -44,6 +44,25 @@ func (l Logger) ParseQnApiLogOutput(t time.Time, data interface{}) {
 	l.Info(str)
 }
 
+func (l Logger) QnInternalError(data interface{}) {
+	s := standardLogFormat{
+		Service: l.ServiceName,
+		From:    data,
+	}
+
+	bs, err := json.Marshal(s)
+	if err != nil {
+		LogPrintf(ErrorLevel, "err log Marshal err:%s", err.Error())
+	}
+	str := string(bs)
+	l.Error(str)
+}
+
+func (l Logger) Method(name string) Logger {
+	l.ServiceName = name
+	return l
+}
+
 func SetupLoggerByDate(logDir, logName string, rotateMaxAge, skip int, report bool, level int) error {
 	if logDir == "" {
 		logDir = defaultDir
