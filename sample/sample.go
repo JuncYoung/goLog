@@ -11,13 +11,13 @@ func main() {
 	nowTime := time.Now()
 	goLog.SetSysLevel(goLog.DebugLevel)
 	goLog.InitConf(goLog.SettingDetail{
-		LogDir:       "/tmp/myLog",
+		LogDir:       "./myLog", // absolute path is suggested
 		RotateMaxAge: 0,
 		Skip:         0,
 		Report:       false,
 		Level:        goLog.DebugLevel,
 	}, goLog.SettingDetail{
-		LogDir:       "/tmp/qnLog",
+		LogDir:       "./qnLog", // absolute path is suggested
 		RotateMaxAge: 0,
 		Skip:         0,
 		Report:       true,
@@ -31,8 +31,10 @@ func main() {
 	goLog.GetQnFileLogger().ParseQnApiLogInput([]string{"12345", "aaaaa", "-----"})
 	goLog.GetQnFileLogger().ParseQnApiLogOutput(nowTime, "success")
 	goLog.GetQnFileLogger().Method("mainFunc").ParseQnApiLogOutput(nowTime, "mainFunc success")
+	goLog.GetQnFileLogger().QnInternalError("error occur")
 
 	goLog.GetFileLogger("demo.log").Warnf("this is %s", "demo warning log")
 	goLog.GetFileLogger("demo.log").Errorf("this is %s", "demo err log")
 	goLog.GetFileLogger("success.log").Infof("this is %s", "success log")
+	goLog.GetFileLogger("other.log").WithFields(map[string]interface{}{"nice": "good", "number": 233.333}).Debug("fields print")
 }
