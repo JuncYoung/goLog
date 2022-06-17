@@ -2,6 +2,7 @@ package goLog
 
 import (
 	"fmt"
+	"path"
 	"strings"
 	"time"
 
@@ -18,7 +19,7 @@ func (s *QnFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 		return []byte(msg), nil
 	}
 
-	file, line, fName := entry.Caller.File, entry.Caller.Line, entry.Caller.Function
+	file, line, fName := path.Base(entry.Caller.File), entry.Caller.Line, entry.Caller.Function
 	msg := fmt.Sprintf("%s [%s] [%s:%d %s]\t%s", timestamp, strings.ToUpper(entry.Level.String()), file, line, fName, entry.Message)
 	return []byte(msg), nil
 }
