@@ -18,6 +18,7 @@ const (
 func (l Logger) ParseQnApiLogInput(data interface{}) {
 	s := standardLogFormat{
 		Service: l.ServiceName,
+		Msg:     l.Msg,
 		From:    data,
 	}
 
@@ -32,6 +33,7 @@ func (l Logger) ParseQnApiLogInput(data interface{}) {
 func (l Logger) ParseQnApiLogOutput(t time.Time, data interface{}) {
 	s := standardLogFormat{
 		Service: l.ServiceName,
+		Msg:     l.Msg,
 		Out:     data,
 		Time:    time.Now().Sub(t).Seconds(),
 	}
@@ -47,6 +49,7 @@ func (l Logger) ParseQnApiLogOutput(t time.Time, data interface{}) {
 func (l Logger) QnInternalError(data interface{}) {
 	s := standardLogFormat{
 		Service: l.ServiceName,
+		Msg:     l.Msg,
 		From:    data,
 	}
 
@@ -58,8 +61,13 @@ func (l Logger) QnInternalError(data interface{}) {
 	l.Error(str)
 }
 
-func (l Logger) Method(name string) Logger {
+func (l Logger) WithMethod(name string) Logger {
 	l.ServiceName = name
+	return l
+}
+
+func (l Logger) WithMsg(msg string) Logger {
+	l.Msg = msg
 	return l
 }
 

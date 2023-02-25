@@ -31,12 +31,14 @@ type standardLogFormat struct {
 	Service string      `json:"service"`
 	From    interface{} `json:"from,omitempty"`
 	Out     interface{} `json:"out,omitempty"`
+	Msg     string      `json:"msg"`
 	Time    float64     `json:"time,omitempty"`
 }
 
 type Logger struct {
 	*logrus.Logger
 	ServiceName string
+	Msg         string
 }
 
 type LogFileWriter struct {

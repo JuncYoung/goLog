@@ -30,7 +30,7 @@ func main() {
 
 	goLog.GetQnFileLogger().ParseQnApiLogInput([]string{"12345", "aaaaa", "-----"})
 	goLog.GetQnFileLogger().ParseQnApiLogOutput(nowTime, "success")
-	goLog.GetQnFileLogger().Method("mainFunc").ParseQnApiLogOutput(nowTime, "mainFunc success")
+	goLog.GetQnFileLogger().WithMethod("mainFunc").WithMsg("test output").ParseQnApiLogOutput(nowTime, "mainFunc success")
 	goLog.GetQnFileLogger().QnInternalError("error occur")
 
 	goLog.GetFileLogger("demo.log").Warnf("this is %s", "demo warning log")
