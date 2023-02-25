@@ -26,7 +26,7 @@ var (
 
 func (p *LogFileWriterByDate) initLogFile(nowDateStr string) error {
 	var err error
-	logFullPath := p.dirPath + "/" + p.fileName + "." + nowDateStr
+	logFullPath := p.dirPath + "/" + p.fileName + "." + nowDateStr + ".log"
 	p.file, err = os.OpenFile(logFullPath, os.O_WRONLY|os.O_APPEND|os.O_CREATE|os.O_SYNC, 0600)
 	if err != nil {
 		return fmt.Errorf("openFile a new file err: %s\n", err.Error())
@@ -104,7 +104,7 @@ func (p *LogFileWriterByDate) Write(data []byte) (int, error) {
 	if p.file == nil {
 		return 0, errors.New("file not opened")
 	}
-	nowDateStr := time.Now().Format("20060102")
+	nowDateStr := time.Now().Format(p.TimeFormat)
 	p.mutex.Lock()
 	if p.dateStr != nowDateStr {
 		if err := p.initLogFile(nowDateStr); err != nil {

@@ -71,17 +71,20 @@ func (l Logger) WithMsg(msg string) Logger {
 	return l
 }
 
-func SetupLoggerByDate(logDir, logName string, rotateMaxAge, skip int, report bool, level int) error {
+func SetupLoggerByDate(logDir, logName string, rotateMaxAge, skip int, report bool, level int, tFormat string) error {
 	if logDir == "" {
 		logDir = defaultDir
+	}
+	if tFormat == "" {
+		tFormat = "20060102" // default format
 	}
 	LogPrintf(DebugLevel, "SetupLoggerByDate using log dir : [%s]\n", logDir)
 
 	log := logrus.New()
-	return setupLoggerByDate(log, parseLogLevel(level), logName, logDir, rotateMaxAge, skip, report)
+	return setupLoggerByDate(log, parseLogLevel(level), logName, logDir, rotateMaxAge, skip, report, tFormat)
 }
 
-func setupLoggerByDate(logs *logrus.Logger, level logrus.Level, fileName, logDir string, rotateMaxAge, skip int, report bool) error {
+func setupLoggerByDate(logs *logrus.Logger, level logrus.Level, fileName, logDir string, rotateMaxAge, skip int, report bool, tFormat string) error {
 	if logs == nil {
 		return ErrEmptyLog
 	}
@@ -97,8 +100,8 @@ func setupLoggerByDate(logs *logrus.Logger, level logrus.Level, fileName, logDir
 		}
 	}
 
-	dateStr := time.Now().Format("20060102")
-	logFullPath := logDir + "/" + fileName + "." + dateStr
+	dateStr := time.Now().Format(tFormat)
+	logFullPath := logDir + "/" + fileName + "." + dateStr + ".log"
 	// os.O_O_CREATE auto create
 	logFile, err := os.OpenFile(logFullPath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	if err != nil {
@@ -111,6 +114,7 @@ func setupLoggerByDate(logs *logrus.Logger, level logrus.Level, fileName, logDir
 		dateStr:      dateStr,
 		mutex:        &sync.Mutex{},
 		rotateMaxAge: rotateMaxAge,
+		TimeFormat:   tFormat,
 	}
 	fileWriter.mustDoMillFirst()
 	logs.SetFormatter(&logrus.JSONFormatter{})
@@ -137,10 +141,10 @@ func SetupQnFormatByDate(logName, serviceName string) error {
 	}
 	LogPrintf(DebugLevel, "SetupQnFormatByDate using log dir : [%s]\n", logDir)
 	log := logrus.New()
-	return setupDIYFormatByDate(log, parseLogLevel(qnSets.Level), logName, logDir, serviceName, qnSets.RotateMaxAge, qnSets.Skip, qnSets.Report)
+	return setupDIYFormatByDate(log, parseLogLevel(qnSets.Level), logName, logDir, serviceName, qnSets.RotateMaxAge, qnSets.Skip, qnSets.Report, qnSets.TimeFormat)
 }
 
-func setupDIYFormatByDate(logs *logrus.Logger, level logrus.Level, fileName, logDir, serviceName string, rotateMaxAge, skip int, report bool) error {
+func setupDIYFormatByDate(logs *logrus.Logger, level logrus.Level, fileName, logDir, serviceName string, rotateMaxAge, skip int, report bool, tFormat string) error {
 	if logs == nil {
 		return ErrEmptyLog
 	}
@@ -155,8 +159,8 @@ func setupDIYFormatByDate(logs *logrus.Logger, level logrus.Level, fileName, log
 		}
 	}
 
-	dateStr := time.Now().Format("20060102")
-	logFullPath := logDir + "/" + fileName + "." + dateStr
+	dateStr := time.Now().Format(tFormat)
+	logFullPath := logDir + "/" + fileName + "-" + dateStr + ".log"
 	// os.O_O_CREATE auto create
 	logFile, err := os.OpenFile(logFullPath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	if err != nil {
@@ -170,6 +174,7 @@ func setupDIYFormatByDate(logs *logrus.Logger, level logrus.Level, fileName, log
 		dateStr:      dateStr,
 		mutex:        &sync.Mutex{},
 		rotateMaxAge: rotateMaxAge,
+		TimeFormat:   tFormat,
 	}
 	fileWriter.mustDoMillFirst()
 	// 设置日志格式为json格式

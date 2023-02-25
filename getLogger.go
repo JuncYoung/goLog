@@ -17,7 +17,7 @@ func GetFileLogger(fileName string) Logger {
 
 	flog := GetFileLoggerMgr().getFileLogger(fileName)
 	if flog.Logger == nil {
-		if err := SetupLoggerByDate(flSets.LogDir, fileName, flSets.RotateMaxAge, flSets.Skip, flSets.Report, DebugLevel); err != nil {
+		if err := SetupLoggerByDate(flSets.LogDir, fileName, flSets.RotateMaxAge, flSets.Skip, flSets.Report, DebugLevel, flSets.TimeFormat); err != nil {
 			LogPrintf(ErrorLevel, "setupLoggerByDate err: %s\n", err.Error())
 		}
 		flog = GetFileLoggerMgr().getFileLogger(fileName)

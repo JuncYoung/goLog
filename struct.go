@@ -13,6 +13,7 @@ type SettingDetail struct {
 	Skip         int    `json:"skip"`
 	Report       bool   `json:"report"`
 	Level        int    `json:"level"`
+	TimeFormat   string `json:"timeFormat"`
 }
 
 type settings struct {
@@ -62,4 +63,5 @@ type LogFileWriterByDate struct {
 	millCh    chan bool
 
 	rotateMaxAge int
+	TimeFormat   string
 }
