@@ -116,7 +116,6 @@ func setupLoggerByDate(logs *logrus.Logger, level logrus.Level, fileName, logDir
 		rotateMaxAge: rotateMaxAge,
 		TimeFormat:   tFormat,
 	}
-	fileWriter.mustDoMillFirst()
 	logs.SetFormatter(&logrus.JSONFormatter{})
 	logs.SetOutput(&fileWriter)
 	logs.SetReportCaller(false)
@@ -176,7 +175,6 @@ func setupDIYFormatByDate(logs *logrus.Logger, level logrus.Level, fileName, log
 		rotateMaxAge: rotateMaxAge,
 		TimeFormat:   tFormat,
 	}
-	fileWriter.mustDoMillFirst()
 	// 设置日志格式为json格式
 	logs.SetFormatter(&QnFormatter{})
 	// 开启调用上下文记录

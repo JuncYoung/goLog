@@ -36,28 +36,6 @@ func (p *LogFileWriterByDate) initLogFile(nowDateStr string) error {
 	return nil
 }
 
-func (p *LogFileWriterByDate) doMill() {
-	p.startMill.Do(func() {
-		p.millCh = make(chan bool, 1)
-		go p.runMill()
-	})
-	select {
-	case p.millCh <- true:
-	case <-time.After(1 * time.Second):
-		LogPrintf(ErrorLevel, "doMill stuck\n")
-	default:
-	}
-}
-
-func (p *LogFileWriterByDate) runMill() {
-	for range p.millCh {
-		err := p.millRunOnce()
-		if err != nil {
-			LogPrintf(ErrorLevel, "millRunOnce err: %s\n", err.Error())
-		}
-	}
-}
-
 func (p *LogFileWriterByDate) getOldLogFiles(timestampLess int64) ([]string, error) {
 	result := make([]string, 0, 100)
 	folderPath := p.dirPath
@@ -75,28 +53,6 @@ func (p *LogFileWriterByDate) getOldLogFiles(timestampLess int64) ([]string, err
 	return result, nil
 }
 
-func (p *LogFileWriterByDate) millRunOnce() error {
-	if p.rotateMaxAge <= 0 {
-		return nil // no need to clean old files
-	}
-
-	diff := time.Duration(int64(24*time.Hour) * int64(p.rotateMaxAge))
-	cutoff := time.Now().Add(-1 * diff)
-	oldFiles, err := p.getOldLogFiles(cutoff.Unix())
-	if err != nil {
-		return err
-	}
-
-	for _, file := range oldFiles {
-		if err := os.Remove(file); err != nil {
-			LogPrintf(WarnLevel, "remove old log file: %s err: %s\n", file, err.Error())
-		}
-	}
-
-	LogPrintf(DebugLevel, "success do millRunOnce, files: %+v, dirPath: %s\n", oldFiles, p.dirPath)
-	return nil
-}
-
 func (p *LogFileWriterByDate) Write(data []byte) (int, error) {
 	if p == nil {
 		return 0, errors.New("logFileWriter is nil")
@@ -110,17 +66,10 @@ func (p *LogFileWriterByDate) Write(data []byte) (int, error) {
 		if err := p.initLogFile(nowDateStr); err != nil {
 			LogPrintf(ErrorLevel, "initLogFile err: %s\n", err.Error())
 		}
-		p.doMill()
 	}
 	p.mutex.Unlock()
 	n, err := p.file.Write(data)
 	return n, err
-}
-
-func (p *LogFileWriterByDate) mustDoMillFirst() {
-	p.once.Do(func() {
-		p.doMill()
-	})
 }
 
 func (p *LogFileWriterByDate) Format(entry *logrus.Entry) ([]byte, error) {
