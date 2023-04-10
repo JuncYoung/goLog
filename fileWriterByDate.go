@@ -27,7 +27,7 @@ var (
 func (p *LogFileWriterByDate) initLogFile(nowDateStr string) error {
 	var err error
 	logFullPath := p.dirPath + "/" + p.fileName + "-" + nowDateStr + ".log"
-	p.file, err = os.OpenFile(logFullPath, os.O_WRONLY|os.O_APPEND|os.O_CREATE|os.O_SYNC, 0600)
+	p.file, err = os.OpenFile(logFullPath, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0600)
 	if err != nil {
 		return fmt.Errorf("openFile a new file err: %s\n", err.Error())
 	}
