@@ -63,6 +63,9 @@ func (p *LogFileWriterByDate) Write(data []byte) (int, error) {
 	nowDateStr := time.Now().Format(p.TimeFormat)
 	p.mutex.Lock()
 	if p.dateStr != nowDateStr {
+		if err := p.file.Close(); err != nil {
+			LogPrintf(ErrorLevel, "pfile close err: %s\n", err.Error())
+		}
 		if err := p.initLogFile(nowDateStr); err != nil {
 			LogPrintf(ErrorLevel, "initLogFile err: %s\n", err.Error())
 		}
